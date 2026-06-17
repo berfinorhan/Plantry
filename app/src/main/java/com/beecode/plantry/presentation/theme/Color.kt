@@ -1,4 +1,4 @@
-package com.beecode.plantry.ui.theme
+package com.beecode.plantry.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

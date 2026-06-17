@@ -6,7 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.beecode.plantry.ui.theme.PlantryTheme
+import com.beecode.plantry.presentation.PantryScreen
+import com.beecode.plantry.presentation.theme.PlantryTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PlantryTheme {
-
+                PantryScreen()
             }
         }
     }
