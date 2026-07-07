@@ -43,9 +43,27 @@ fun PantryScreen(
 
             ElevatedButton(onClick = {
                 viewModel.addItem()
-            }) {
+            }, enabled = uiState.itemName.isNotBlank() && uiState.quantity.isNotBlank() && uiState.unit.isNotBlank()) {
                 Text("Add")
             }
+        }
+
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            OutlinedTextField(
+                value = uiState.quantity,
+                onValueChange = { viewModel.updateQuantity(quantity = it) },
+                label = { Text("Quantity") },
+            )
+
+            OutlinedTextField(
+                value = uiState.unit,
+                onValueChange = { viewModel.updateUnit(unit = it) },
+                label = { Text("Unit") },
+            )
         }
 
         Text("Pantry Items", modifier = Modifier.padding(top = 32.dp), fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -59,7 +77,7 @@ fun PantryScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(item.name)
+                    Text(item.name + ", " + item.quantity + " " + item.unit)
                     ElevatedButton(onClick = {
                         viewModel.deleteItem(item)
                     }) {

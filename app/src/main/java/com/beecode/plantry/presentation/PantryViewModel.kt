@@ -8,19 +8,36 @@ import java.util.UUID
 
 class PantryViewModel: ViewModel() {
 
-    private val _pantryUiState = mutableStateOf(PantryUiState())
+    private val _pantryUiState = mutableStateOf(PantryUiState(
+        itemName = "",
+        quantity = "",
+        unit = "",
+    ))
     val pantryUiState: State<PantryUiState> = _pantryUiState
 
     fun addItem() {
         val trimmedName = pantryUiState.value.itemName.trim()
-        if (trimmedName.isNotEmpty()) {
-            val newItem = PantryItem(UUID.randomUUID(), trimmedName)
+        if (trimmedName.isNotBlank()) {
+            val newItem = PantryItem(
+                id = UUID.randomUUID(),
+                name = trimmedName,
+                quantity = pantryUiState.value.quantity.toInt(),
+                unit = pantryUiState.value.unit
+            )
             _pantryUiState.value = _pantryUiState.value.copy(pantryItems = pantryUiState.value.pantryItems + newItem)
         }
     }
 
     fun updateItemName(itemName: String) {
         _pantryUiState.value = _pantryUiState.value.copy(itemName = itemName)
+    }
+
+    fun updateQuantity(quantity: String) {
+        _pantryUiState.value = _pantryUiState.value.copy(quantity = quantity)
+    }
+
+    fun updateUnit(unit: String) {
+        _pantryUiState.value = _pantryUiState.value.copy(unit = unit)
     }
 
     fun deleteItem(item: PantryItem) {
