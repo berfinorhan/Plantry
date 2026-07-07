@@ -21,10 +21,11 @@ class PantryViewModel: ViewModel() {
             val newItem = PantryItem(
                 id = UUID.randomUUID(),
                 name = trimmedName,
-                quantity = pantryUiState.value.quantity.toInt(),
+                quantity = pantryUiState.value.quantity.toDoubleOrNull() ?: 1.0,
                 unit = pantryUiState.value.unit
             )
             _pantryUiState.value = _pantryUiState.value.copy(pantryItems = pantryUiState.value.pantryItems + newItem)
+            _pantryUiState.value = _pantryUiState.value.copy(itemName = "", quantity = "", unit = "")
         }
     }
 

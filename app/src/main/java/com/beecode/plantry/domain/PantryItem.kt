@@ -5,6 +5,6 @@ import java.util.UUID
 data class PantryItem (
     val id: UUID,
     val name: String,
-    val quantity: Int,
+    val quantity: Double,
     val unit: String
 )

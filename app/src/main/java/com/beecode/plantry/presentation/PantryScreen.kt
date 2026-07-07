@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,7 +45,7 @@ fun PantryScreen(
 
             ElevatedButton(onClick = {
                 viewModel.addItem()
-            }, enabled = uiState.itemName.isNotBlank() && uiState.quantity.isNotBlank() && uiState.unit.isNotBlank()) {
+            }, enabled = uiState.itemName.isNotBlank() && uiState.quantity.isQuantityValid() && uiState.unit.isNotBlank()) {
                 Text("Add")
             }
         }
@@ -56,6 +58,9 @@ fun PantryScreen(
             OutlinedTextField(
                 value = uiState.quantity,
                 onValueChange = { viewModel.updateQuantity(quantity = it) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal
+                ),
                 label = { Text("Quantity") },
             )
 
@@ -77,7 +82,7 @@ fun PantryScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(item.name + ", " + item.quantity + " " + item.unit)
+                    Text("${item.name}, ${item.quantity} ${item.unit}")
                     ElevatedButton(onClick = {
                         viewModel.deleteItem(item)
                     }) {
@@ -87,4 +92,9 @@ fun PantryScreen(
             }
         }
     }
+}
+
+fun String.isQuantityValid(): Boolean {
+    val doubleVal = this.toDoubleOrNull()
+    return this.isNotBlank() && doubleVal != null && doubleVal > 0.0
 }
