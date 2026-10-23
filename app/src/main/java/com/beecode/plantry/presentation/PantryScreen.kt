@@ -18,42 +18,45 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.beecode.plantry.presentation.Util.Companion.formattedQuantity
+import com.beecode.plantry.presentation.Util.Companion.isNameValid
+import com.beecode.plantry.presentation.Util.Companion.isQuantityValid
+import com.beecode.plantry.presentation.Util.Companion.isUnitValid
 
 @Composable
 fun PantryScreen(
     viewModel: PantryViewModel = viewModel()
 ) {
     val uiState = viewModel.pantryUiState.value
+    val allFieldsValid = uiState.itemName.isNameValid() && uiState.quantity.isQuantityValid() && uiState.unit.isUnitValid()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 32.dp)
     ) {
-        Text("Pantry", modifier = Modifier.padding(top = 32.dp, bottom = 16.dp), fontSize = 40.sp, fontWeight = FontWeight.Bold)
+        Text(
+            "Pantry",
+            modifier = Modifier.padding(top = 32.dp, bottom = 16.dp),
+            fontSize = 40.sp,
+            fontWeight = FontWeight.Bold
+        )
 
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedTextField(
                 value = uiState.itemName,
                 onValueChange = { viewModel.updateItemName(itemName = it) },
                 label = { Text("Item Name") },
             )
-
-            ElevatedButton(onClick = {
-                viewModel.addItem()
-            }, enabled = uiState.itemName.isNotBlank() && uiState.quantity.isQuantityValid() && uiState.unit.isNotBlank()) {
-                Text("Add")
-            }
         }
 
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             OutlinedTextField(
                 value = uiState.quantity,
@@ -61,9 +64,11 @@ fun PantryScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal
                 ),
+                isError = !uiState.quantity.isQuantityValid(),
                 label = { Text("Quantity") },
             )
 
+            //todo: dropdown
             OutlinedTextField(
                 value = uiState.unit,
                 onValueChange = { viewModel.updateUnit(unit = it) },
@@ -71,18 +76,33 @@ fun PantryScreen(
             )
         }
 
-        Text("Pantry Items", modifier = Modifier.padding(top = 32.dp), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        ElevatedButton(
+            modifier = Modifier.padding(top = 16.dp),
+            enabled = allFieldsValid,
+            onClick = {
+                viewModel.addItem()
+            }
+        ) {
+            Text("Add")
+        }
+
+        Text(
+            "Pantry Items",
+            modifier = Modifier.padding(top = 32.dp, bottom = 16.dp),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
 
         if (uiState.pantryItems.isEmpty()) {
             Text("No items yet.")
         } else {
             for (item in uiState.pantryItems) {
-                Row (
+                Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("${item.name}, ${item.quantity} ${item.unit}")
+                    Text("${item.name}, ${item.quantity.formattedQuantity} ${item.unit}")
                     ElevatedButton(onClick = {
                         viewModel.deleteItem(item)
                     }) {
@@ -92,9 +112,4 @@ fun PantryScreen(
             }
         }
     }
-}
-
-fun String.isQuantityValid(): Boolean {
-    val doubleVal = this.toDoubleOrNull()
-    return this.isNotBlank() && doubleVal != null && doubleVal > 0.0
 }

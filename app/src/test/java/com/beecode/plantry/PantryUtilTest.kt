@@ -9,9 +9,20 @@ import org.junit.Assert.*
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class ExampleUnitTest {
+class PantryUtilTest {
+
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun isNameValid() {
+
+    }
+
+    @Test
+    fun isQuantityValid() {
+
+    }
+
+    @Test
+    fun isUnitValid() { //todo: need to switch to enum
+
     }
 }

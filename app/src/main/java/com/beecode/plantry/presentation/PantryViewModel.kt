@@ -1,31 +1,39 @@
 package com.beecode.plantry.presentation
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.beecode.plantry.domain.PantryItem
-import androidx.compose.runtime.State
+import com.beecode.plantry.presentation.Util.Companion.isNameValid
+import com.beecode.plantry.presentation.Util.Companion.isQuantityValid
+import com.beecode.plantry.presentation.Util.Companion.isUnitValid
 import java.util.UUID
 
-class PantryViewModel: ViewModel() {
+class PantryViewModel : ViewModel() {
 
-    private val _pantryUiState = mutableStateOf(PantryUiState(
-        itemName = "",
-        quantity = "",
-        unit = "",
-    ))
+    private val _pantryUiState = mutableStateOf(
+        PantryUiState(
+            itemName = "",
+            quantity = "",
+            unit = "",
+        )
+    )
     val pantryUiState: State<PantryUiState> = _pantryUiState
 
     fun addItem() {
         val trimmedName = pantryUiState.value.itemName.trim()
-        if (trimmedName.isNotBlank()) {
+        if (trimmedName.isNameValid() && pantryUiState.value.quantity.isQuantityValid() && pantryUiState.value.unit.isUnitValid()) {
             val newItem = PantryItem(
                 id = UUID.randomUUID(),
                 name = trimmedName,
-                quantity = pantryUiState.value.quantity.toDoubleOrNull() ?: 1.0,
+                quantity = pantryUiState.value.quantity.toDoubleOrNull()
+                    ?: return, //todo: error mechanism
                 unit = pantryUiState.value.unit
             )
-            _pantryUiState.value = _pantryUiState.value.copy(pantryItems = pantryUiState.value.pantryItems + newItem)
-            _pantryUiState.value = _pantryUiState.value.copy(itemName = "", quantity = "", unit = "")
+            _pantryUiState.value =
+                _pantryUiState.value.copy(pantryItems = pantryUiState.value.pantryItems + newItem)
+            _pantryUiState.value =
+                _pantryUiState.value.copy(itemName = "", quantity = "", unit = "")
         }
     }
 
@@ -42,6 +50,7 @@ class PantryViewModel: ViewModel() {
     }
 
     fun deleteItem(item: PantryItem) {
-        _pantryUiState.value = _pantryUiState.value.copy(pantryItems = pantryUiState.value.pantryItems.filter { it.id != item.id })
+        _pantryUiState.value =
+            _pantryUiState.value.copy(pantryItems = pantryUiState.value.pantryItems.filter { it.id != item.id })
     }
 }
